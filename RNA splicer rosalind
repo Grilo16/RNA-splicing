@@ -1,31 +1,48 @@
+def Fastalist(file):
+    Fastalist = []
+    for line in file:
+        if str(line).startswith(">"):
+            Fastalist.append(line)
+        else:
+            if Fastalist[-1].startswith(">"):
+                Fastalist.append(line)
+            else:
+                Fastalist[-1] = Fastalist[-1] + line
+    return Fastalist
+
+def intron_remover(seq, list):
+    Newseq = seq
+    for intron in list:
+        Newseq = Newseq.replace(intron, "")
+    return Newseq
+
     ## Amino acid codon dictionary
 
-Bases = "tcag"
-Amino_acids = "FFFFSSSSYY**CC*WLLLLPPPPHHQQRRRRIIMMTTTTNNKKSSRRVVVVAAAADDEEGGGG"
+Bases = "TCAG"
+Amino_acids = "FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG"
 Codons = [a + b + c for a in Bases for b in Bases for c in Bases]
 AADictionary = dict(zip(Codons, Amino_acids))
 
-#print(AADictionary["tag"])
-
-    ## Fasta Label Code dictionary
+    ## Fasta reader Label:SEQ dictionary
 
 Fastafile = open("Dataset").read().split("\n")
-Data_dictionary = dict(zip(Fastafile[::2], Fastafile[1::2]))
-
-#print(Data_dictionary[">Rosalind_12"])
+Fastaprocessed = Fastalist(Fastafile)
+Data_dictionary = dict(zip(Fastaprocessed[::2], Fastaprocessed[1::2]))
 
     ## Removing introns
 
 DnaSeq = list(Data_dictionary.values())[0]
-Introns = [x for x in Data_dictionary.values()][1::]
-nointrons = DnaSeq.replace(Introns[0],"")
-nointrons2 = nointrons.replace(Introns[1],"")
+Introns = list(Data_dictionary.values())[1::]
+NoIntronSeq = intron_remover(DnaSeq, Introns)
 
-def intron_remover(seq, list):
-        Newseq = seq
-        for intron in list:
-            Newseq = Newseq.replace(intron, "")
-        return Newseq
+    ## Converting into codon list
 
-print("dna seq intron removed",intron_remover(DnaSeq, Introns))
-print("lenght of seq",len(intron_remover(DnaSeq, Introns)))
+CodonDataset = [NoIntronSeq[i:i+3] for i in range(0, len(NoIntronSeq), 3)]
+
+    ## Converting into amino acid string
+
+DataAAList = [AADictionary[codon] for codon in CodonDataset]
+DataAAStr = "".join(DataAAList)
+Final_output = DataAAStr.replace("*","")
+
+print(Final_output)

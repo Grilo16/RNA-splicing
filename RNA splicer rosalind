@@ -21,17 +21,11 @@ Introns = [x for x in Data_dictionary.values()][1::]
 nointrons = DnaSeq.replace(Introns[0],"")
 nointrons2 = nointrons.replace(Introns[1],"")
 
-Newseq = [len(DnaSeq.replace(intron, "")) for intron in Introns]
-
 def intron_remover(seq, list):
-    Newseq = seq
-    for intron in list:
-        Newseq = Newseq.replace(intron, "")
-    return Newseq
+        Newseq = seq
+        for intron in list:
+            Newseq = Newseq.replace(intron, "")
+        return Newseq
 
-print(intron_remover(DnaSeq, Introns))
-print(len(intron_remover(DnaSeq, Introns)))
-
-print(Newseq)
-print(DnaSeq)
-print(Introns)
+print("dna seq intron removed",intron_remover(DnaSeq, Introns))
+print("lenght of seq",len(intron_remover(DnaSeq, Introns)))
